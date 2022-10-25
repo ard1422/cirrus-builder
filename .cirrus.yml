@@ -54,14 +54,14 @@ task:
       - export BUILD_WITH_COLORS=1
       - sudo ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build Started!"
-      - ./collect.sh
-#      - ./final.sh
+#      - ./collect.sh
+      - ./final.sh
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build Completed!"
 
   Upload_script:
-#      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Uploading Build $(cd out/target/product/ysl/ && ls Bootleggers*.zip)"
-#      - rclone copy out/target/product/ysl/Bootleggers*.zip venyx:ysl -P
-#      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build $(cd out/target/product/ysl/ && ls Bootleggers*.zip) Uploaded Successfully!"
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Uploading Build $(cd out/target/product/ysl/ && ls Bootleggers*.zip)"
+      - rclone copy out/target/product/ysl/Bootleggers*.zip venyx:ysl -P
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build $(cd out/target/product/ysl/ && ls Bootleggers*.zip) Uploaded Successfully!"
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Compres ccache"
       - ./ziping.sh
       - cd ~/
