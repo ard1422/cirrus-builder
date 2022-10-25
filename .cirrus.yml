@@ -1,0 +1,71 @@
+env:
+    credentials: "ENCRYPTED[!a27be0f4858421619164791355b55404da2207190e137d3b8fcb7442d9d5513dda26ed3cedaf529a0289c1c971800647!]"
+    rcloneconfig: "ENCRYPTED[!6bf31add8384fd4b6fe7a4f11c43f69318ce46f5fbbebab867a98863571fdfb62c283abf2ef30c90fc8b4715850ec5f2!]"
+    tokentl: "ENCRYPTED[!ed426c81503778dd57bf2762c693ddc947c35230c7e683121a65ee6498c899806e9062bb235803a59b51ce7891ac72ce!]"
+    idtl: "ENCRYPTED[!4de30c8ef58a465021ce742ef1c1e8ac6922d31236ce35439a8fb6f855b930ebba6b400ad8daf4f4d5288b08321bd326!]"
+    lunch : lunch bootleg_ysl-userdebug
+    make: make bootleg
+ 
+task:
+  name: "Setting Up, Syncing, Building and Uploading..."
+  timeout_in: 480m  
+  container:
+      image: inok2341/anu:latest
+      cpu: 8
+      memory: 32G
+        
+  Build-Env-Setup_background_script:
+       - export DEBIAN_FRONTEND=noninteractive
+       - mkdir -p ~/.config/rclone
+       - echo "$rcloneconfig" > ~/.rclone.conf
+       - git config --global user.name "Rahmad Adi Pratama"
+       - git config --global user.email "OhMyVenyx@proton.me"
+       - echo "$credentials" > ~/.git-credentials
+       - git config --global credential.helper store --file=~/.git-credentials
+       - mkdir -p ~/ccache
+       - rclone copy venyx:bootleg/ccache.tar.gz ~/ -P
+       - cd ~/
+       - time tar xf ccache.tar.gz
+       - cd ~/
+  
+  Storage-Checker_background_script:
+      - df -h
+      - lsblk
+      - ls -l -a -h
+      - ./w.sh
+  
+  Sync_script:
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Start sync Source"
+#      - mkdir -p ~/rom
+#      - cd ~/rom
+#      - rm -rf * .repo
+      - mkdir -p ~/.anu
+      - export PATH="~/.anu:$PATH"
+      - curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/.anu/repoo
+      - chmod a+x ~/.anu/repoo
+      - repoo init -q --no-repo-verify --depth=1 -u https://github.com/BootlegxWeeabo/manifest -b queso -g default,-mips,-darwin,-notdefault
+      - git clone https://github.com/IDN-Labs/local_manifest --depth 1 -b bootleg-10 .repo/local_manifests
+      - repoo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8 --fail-fast
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Sync Completed!"
+
+  Build_script:
+      - export BUILD_USERNAME="venyx"
+      - export BUILD_HOSTNAME="IDN-Labs"
+      - export BUILD_WITH_COLORS=1
+      - sudo ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build Started!"
+      - ./collect.sh
+#      - ./final.sh
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build Completed!"
+
+  Upload_script:
+#      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Uploading Build $(cd out/target/product/ysl/ && ls Bootleggers*.zip)"
+#      - rclone copy out/target/product/ysl/Bootleggers*.zip venyx:ysl -P
+#      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build $(cd out/target/product/ysl/ && ls Bootleggers*.zip) Uploaded Successfully!"
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Compres ccache"
+      - ./ziping.sh
+      - cd ~/
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Uploading ccache...."
+      - rclone copy ccache.tar.gz venyx:bootleg -P
+      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Ccache Uploaded Successfully!"
+
