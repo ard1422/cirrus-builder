@@ -41,11 +41,12 @@ task:
 #      - rm -rf * .repo
       - mkdir -p ~/.anu
       - export PATH="~/.anu:$PATH"
-      - curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/.anu/repoo
-      - chmod a+x ~/.anu/repoo
-      - repoo init -q --no-repo-verify --depth=1 -u https://github.com/BootlegxWeeabo/manifest -b queso -g default,-mips,-darwin,-notdefault
+      - curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/.anu/repo
+      - chmod a+x ~/.anu/repo
+      - git clone https://gerrit.googlesource.com/git-repo .repo/repo
+      - repo init -q --no-repo-verify --depth=1 -u https://github.com/BootlegxWeeabo/manifest -b queso -g default,-mips,-darwin,-notdefault
       - git clone https://github.com/IDN-Labs/local_manifest --depth 1 -b bootleg-10 .repo/local_manifests
-      - repoo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8 --fail-fast
+      - repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8 --fail-fast
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Sync Completed!"
 
   Build_script:
