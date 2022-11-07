@@ -1,10 +1,10 @@
 env:
-    credentials: "ENCRYPTED[!a27be0f4858421619164791355b55404da2207190e137d3b8fcb7442d9d5513dda26ed3cedaf529a0289c1c971800647!]"
-    rcloneconfig: "ENCRYPTED[!6bf31add8384fd4b6fe7a4f11c43f69318ce46f5fbbebab867a98863571fdfb62c283abf2ef30c90fc8b4715850ec5f2!]"
-    tokentl: "ENCRYPTED[!ed426c81503778dd57bf2762c693ddc947c35230c7e683121a65ee6498c899806e9062bb235803a59b51ce7891ac72ce!]"
-    idtl: "ENCRYPTED[!4de30c8ef58a465021ce742ef1c1e8ac6922d31236ce35439a8fb6f855b930ebba6b400ad8daf4f4d5288b08321bd326!]"
-    lunch : lunch bootleg_ysl-userdebug
-    make: make bootleg
+    credentials: "ENCRYPTED[!27a6cc4b75e4efbb734dd1516c19007e132c0ac3aca874a6aba831a04c55e35d2baef260749943a15b995a4115796c1d!]"
+    rcloneconfig: "ENCRYPTED[!bb2832906c58d01338e8b1e7de44ec13eeb68571a2c88ca6dfb4605eee66ae026befa372aa12a14154dfece241256e54!]"
+    tokentl: "ENCRYPTED[!a78bd3935d8fe05e7332e0a0d18ec5bfe6fe38dfeb0f8f2be03c39caa5165d1f1122c4c652f2c898599737a3fdcc03bf!]"
+    idtl: "ENCRYPTED[!fad34f452ed9a692c32548b41cb9521f78b81edd6e7a0ece89110c2b0893d69c788f5eb03c746068ce587e1ad2d9adbc!]"
+    lunch : lunch nad_ysl-userdebug
+    make: make nad
  
 task:
   name: "Setting Up, Syncing, Building and Uploading..."
@@ -23,7 +23,7 @@ task:
        - echo "$credentials" > ~/.git-credentials
        - git config --global credential.helper store --file=~/.git-credentials
        - mkdir -p ~/ccache
-       - rclone copy venyx:bootleg/ccache.tar.gz ~/ -P
+       - rclone copy venyx:nad-12/ccache.tar.gz ~/ -P
        - cd ~/
        - time tar xf ccache.tar.gz
        - cd ~/
@@ -44,8 +44,8 @@ task:
       - curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/.anu/repo
       - chmod a+x ~/.anu/repo
       - git clone https://gerrit.googlesource.com/git-repo .repo/repo
-      - repo init -q --no-repo-verify --depth=1 -u https://github.com/BootlegxWeeabo/manifest -b queso -g default,-mips,-darwin,-notdefault
-      - git clone https://github.com/IDN-Labs/local_manifest --depth 1 -b bootleg-10 .repo/local_manifests
+      - repo init -q --no-repo-verify --depth=1 -u https://github.com/OhMyVenyx/android_manifest -b 12.1 -g default,-mips,-darwin,-notdefault
+      - git clone https://github.com/IDN-Labs/local_manifest --depth 1 -b nad-12.1 .repo/local_manifests
       - repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8 --fail-fast
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Sync Completed!"
 
@@ -55,17 +55,17 @@ task:
       - export BUILD_WITH_COLORS=1
       - sudo ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build Started!"
-#      - ./collect.sh
-      - ./final.sh
+      - ./collect.sh
+#      - ./final.sh
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build Completed!"
 
   Upload_script:
-      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Uploading Build $(cd out/target/product/ysl/ && ls Bootleggers*.zip)"
-      - rclone copy out/target/product/ysl/Bootleggers*.zip venyx:ysl -P
-      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build $(cd out/target/product/ysl/ && ls Bootleggers*.zip) Uploaded Successfully!"
+#      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Uploading Build $(cd out/target/product/ysl/ && ls Nusantara*.zip)"
+#      - rclone copy out/target/product/ysl/Nusantara*.zip venyx:ysl -P
+#      - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Build $(cd out/target/product/ysl/ && ls Nusantara*.zip) Uploaded Successfully!"
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Compres ccache"
       - ./ziping.sh
       - cd ~/
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Uploading ccache...."
-      - rclone copy ccache.tar.gz venyx:bootleg -P
+      - rclone copy ccache.tar.gz venyx:nad-12 -P
       - curl -s https://api.telegram.org/$tokentl/sendMessage -d chat_id=$idtl -d text="Ccache Uploaded Successfully!"
